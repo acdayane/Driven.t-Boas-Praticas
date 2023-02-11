@@ -1,5 +1,4 @@
 import app, { init } from "@/app";
-import { prisma } from "@/config";
 import faker from "@faker-js/faker";
 import { TicketStatus } from "@prisma/client";
 import httpStatus from "http-status";
@@ -115,18 +114,6 @@ describe("POST /booking", () => {
   });
 
   describe("when token is valid", () => {
-    // it("should respond with status 402 when user ticket is remote ", async () => {
-    //   const user = await createUser();
-    //   const token = await generateValidToken(user);
-    //   const enrollment = await createEnrollmentWithAddress(user);
-    //   const ticketType = await createTicketTypeRemote();
-    //   await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
-
-    //   const response = await server.post("/booking").set("Authorization", `Bearer ${token}`);
-
-    //   expect(response.status).toEqual(httpStatus.FORBIDDEN);
-    // });
-
     it("should respond with status 403 when user ticket is not paid ", async () => {
       const user = await createUser();
       const token = await generateValidToken(user);
@@ -139,7 +126,7 @@ describe("POST /booking", () => {
       expect(response.status).toEqual(httpStatus.FORBIDDEN);
     });
 
-    it("should respond with status 403 when user ticket does not include hotel ", async () => {
+    it("should respond with status 403 when user ticket does not include hotel or event is remote", async () => {
       const user = await createUser();
       const token = await generateValidToken(user);
       const enrollment = await createEnrollmentWithAddress(user);
