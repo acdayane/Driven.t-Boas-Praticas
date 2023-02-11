@@ -4,7 +4,7 @@ import bookingRepository from "@/repositories/booking-repository";
 import { notFoundError, unauthorizedErrorBooking } from "@/errors";
 
 async function listBooking(userId: number) {
-  const booking = bookingRepository.findBooking(userId);  
+  const booking = await bookingRepository.findBooking(userId);  
   if (!booking) {
     throw notFoundError();
   }
@@ -36,12 +36,17 @@ async function newBooking(userId: number, roomId: number) {
   return booking;
 }
 
-async function changeBooking(bookingId: number, roomId: number) {
+async function changeBooking(bookingId: number, roomId: number, userId: number) {
   const room = await bookingRepository.findRoom(roomId);
   if (!room) {
     throw notFoundError();
   }
   if (room.capacity <= room.Booking.length) {
+    throw unauthorizedErrorBooking();
+  }
+
+  const checkBooking = await bookingRepository.findBookingById(bookingId); 
+  if (checkBooking.userId != userId) {
     throw unauthorizedErrorBooking();
   }
 
